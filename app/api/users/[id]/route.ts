@@ -15,7 +15,7 @@ function getUsersFromCache(): User[] {
     cachedUsers = JSON.parse(fileContent);
     console.log('📦 Loaded users into "Redis" cache');
   }
-  return cachedUsers;
+  return cachedUsers!;
 }
 
 export async function GET(
