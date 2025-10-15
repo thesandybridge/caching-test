@@ -82,7 +82,7 @@ export function Strategy1() {
             type="number"
             value={userCount}
             onChange={(e) => setUserCount(Math.max(1, Math.min(1000, parseInt(e.target.value) || 50)))}
-            className="px-3 py-1 border border-gray-300 rounded-md text-sm w-24"
+            className="px-3 py-1 border border-gray-300 rounded-md text-sm w-24 text-gray-900 bg-white"
             min="1"
             max="1000"
           />
