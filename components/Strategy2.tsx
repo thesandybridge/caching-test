@@ -89,8 +89,8 @@ export function Strategy2() {
 
       // Extract the cached user data
       const users = userQueries
-        .map(query => query.state.data)
-        .filter(data => data?.user);
+        .map(query => query.state.data as { user?: unknown })
+        .filter(data => data && data.user);
 
       setCachedData({ users });
     };

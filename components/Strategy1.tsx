@@ -106,7 +106,7 @@ export function Strategy1() {
       {showUsers && data && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {displayedUserIds.map(userId => {
-            const user = data.users.find(u => u.id === userId);
+            const user = data.users.find((u: User) => u.id === userId);
             return user ? <UserCard key={userId} user={user} /> : null;
           })}
         </div>
