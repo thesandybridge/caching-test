@@ -8,7 +8,7 @@ import { User } from '@/types/user';
 
 let cachedUsers: User[] | null = null;
 
-function getUsersFromCache() {
+function getUsersFromCache(): User[] {
   if (!cachedUsers) {
     const filePath = join(process.cwd(), 'data', 'users.json');
     const fileContent = readFileSync(filePath, 'utf-8');
