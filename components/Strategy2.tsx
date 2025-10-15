@@ -1,7 +1,6 @@
 'use client';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { User } from '@/types/user';
 import { useState, useEffect } from 'react';
 import { MemoryChart } from './MemoryChart';
 
@@ -65,10 +64,14 @@ function UserCard({ userId }: { userId: number }) {
   );
 }
 
+interface CachedData {
+  users: unknown[];
+}
+
 export function Strategy2() {
   const [showUsers, setShowUsers] = useState(false);
   const [userCount, setUserCount] = useState(50);
-  const [cachedData, setCachedData] = useState<any>(null);
+  const [cachedData, setCachedData] = useState<CachedData | null>(null);
   const queryClient = useQueryClient();
 
   const displayedUserIds = Array.from({ length: userCount }, (_, i) => i + 1);
@@ -115,7 +118,7 @@ export function Strategy2() {
             </span>
           </div>
           <div className="text-xs text-gray-500 mb-2">
-            Each user is cached independently with key: ['user', id]
+            Each user is cached independently with key: [&apos;user&apos;, id]
           </div>
           <div className="text-xs text-gray-600 font-semibold">
             Currently cached: {cachedData?.users?.length || 0} users

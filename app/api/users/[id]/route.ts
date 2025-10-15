@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { User } from '@/types/user';
 
 // This simulates a Redis cache lookup by ID
 // In a real app, this would be Redis GET by key
 
-let cachedUsers: any[] | null = null;
+let cachedUsers: User[] | null = null;
 
 function getUsersFromCache() {
   if (!cachedUsers) {

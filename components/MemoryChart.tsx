@@ -10,7 +10,7 @@ interface MemoryDataPoint {
 }
 
 interface MemoryChartProps {
-  data: any;
+  data: unknown;
   label: string;
   color: string;
 }

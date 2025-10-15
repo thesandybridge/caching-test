@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { User } from '@/types/user';
 
 // This simulates a Redis cache containing all users
 // In a real app, this would be Redis or another cache layer
 
-let cachedUsers: any[] | null = null;
+let cachedUsers: User[] | null = null;
 
 function getUsersFromCache() {
   if (!cachedUsers) {
