@@ -51,7 +51,7 @@ export function MemoryChart({ data, label, color }: MemoryChartProps) {
         </h3>
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-600">Current cache size:</span>
-          <span className="text-lg font-bold" style={{ color }}>
+          <span className="text-lg font-bold text-gray-900">
             {formatBytes(currentSize)}
           </span>
         </div>

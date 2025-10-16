@@ -5,6 +5,9 @@ import { User } from '@/types/user';
 import { useState } from 'react';
 import { MemoryChart } from './MemoryChart';
 import { PerformanceMetrics } from './PerformanceMetrics';
+import { CostCalculator } from './CostCalculator';
+import { MobileWarning } from './MobileWarning';
+import { RedisArchitecture } from './RedisArchitecture';
 import Image from 'next/image';
 import { getObjectSize } from '@/utils/memory';
 
@@ -57,10 +60,10 @@ export function Strategy1() {
     <div className="border-2 border-blue-500 rounded-xl p-6 bg-blue-50">
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-blue-900 mb-2">
-          Strategy 1: Fetch All Users Upfront
+          Strategy 1: Fetch All Upfront
         </h2>
         <p className="text-sm text-blue-700 mb-4">
-          Loads entire user dataset once, then individual cards read from that cached data.
+          Loads entire user dataset in a single request. Simple implementation, with trade-offs at scale.
         </p>
 
         <div className="bg-white rounded-lg p-4 mb-4">
@@ -80,11 +83,26 @@ export function Strategy1() {
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           <MemoryChart data={data} label="All Users Cache" color="#2563eb" />
           <PerformanceMetrics
-            strategy="strategy1"
             apiCallCount={data ? 1 : 0}
             totalDataTransferred={data ? getObjectSize(data) : 0}
             initialLoadTime={data?.meta.fetchTime}
             color="#2563eb"
+          />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <CostCalculator
+            strategy="strategy1"
+            dataSize={data ? getObjectSize(data) : 0}
+            color="#dc2626"
+          />
+          <RedisArchitecture strategy="strategy1" />
+        </div>
+
+        <div className="mb-4">
+          <MobileWarning
+            dataSize={data ? getObjectSize(data) : 0}
+            strategy="strategy1"
           />
         </div>
 

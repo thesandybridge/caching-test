@@ -4,6 +4,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { MemoryChart } from './MemoryChart';
 import { PerformanceMetrics } from './PerformanceMetrics';
+import { CostCalculator } from './CostCalculator';
+import { MobileWarning } from './MobileWarning';
+import { RedisArchitecture } from './RedisArchitecture';
 import Image from 'next/image';
 import { getObjectSize } from '@/utils/memory';
 
@@ -123,10 +126,10 @@ export function Strategy2() {
     <div className="border-2 border-green-500 rounded-xl p-6 bg-green-50">
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-green-900 mb-2">
-          Strategy 2: Fetch Users Individually by ID
+          Strategy 2: Fetch Individually by ID
         </h2>
         <p className="text-sm text-green-700 mb-4">
-          Each user card fetches its own data individually and caches it separately.
+          Fetches users on-demand as needed. Better suited for large datasets and bandwidth efficiency.
         </p>
 
         <div className="bg-white rounded-lg p-4 mb-4">
@@ -147,10 +150,25 @@ export function Strategy2() {
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           <MemoryChart data={cachedData} label="Individual User Caches" color="#16a34a" />
           <PerformanceMetrics
-            strategy="strategy2"
             apiCallCount={cachedData?.users?.length || 0}
             totalDataTransferred={cachedData ? getObjectSize(cachedData) : 0}
             color="#16a34a"
+          />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <CostCalculator
+            strategy="strategy2"
+            dataSize={cachedData ? getObjectSize(cachedData) : 0}
+            color="#16a34a"
+          />
+          <RedisArchitecture strategy="strategy2" />
+        </div>
+
+        <div className="mb-4">
+          <MobileWarning
+            dataSize={cachedData ? getObjectSize(cachedData) : 0}
+            strategy="strategy2"
           />
         </div>
 
