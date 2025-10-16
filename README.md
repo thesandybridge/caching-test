@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# React Query Caching Strategies Demo
 
-## Getting Started
+A performance comparison demo showing two different caching strategies with React Query and their real-world impact on memory usage and API calls.
 
-First, run the development server:
+## 🎯 What This Demonstrates
 
+This project compares two caching strategies:
+
+**Strategy 1: Fetch All Upfront**
+- Single API call fetches entire dataset (~46 MB with 50k users)
+- All data cached under one key
+- Heavy initial load, but instant subsequent access
+- High memory footprint
+
+**Strategy 2: Fetch Individually by ID**
+- Multiple small API calls (one per user)
+- Each user cached separately
+- Lighter initial load, gradual memory usage
+- More network requests but smaller payloads
+
+## 🚀 Getting Started
+
+### Local Development
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Generate user data (locally):
+```bash
+npm run generate 50000  # Generates 50,000 users (~46 MB)
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+### Generate Different Dataset Sizes
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run generate 10000   # Small dataset (~9 MB)
+npm run generate 50000   # Medium dataset (~46 MB)
+npm run generate 100000  # Large dataset (~92 MB)
+npm run generate 500000  # Extreme dataset (~460 MB)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📊 Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Real-time Memory Charts**: See cache size grow over time
+- **Performance Metrics**: API calls, data transferred, load times, render counts
+- **Interactive Controls**: Adjust number of displayed users to see performance impact
+- **Visual Comparison**: Side-by-side comparison of both strategies
 
-## Deploy on Vercel
+## 🌐 Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+When deploying to Vercel, the user data is **automatically generated during build** via the `prebuild` script.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
+
+The build process will:
+1. Run `prebuild` script which generates 50,000 users
+2. Build the Next.js app with the generated data
+3. Deploy to Vercel
+
+**Note**: The `data/` directory is gitignored, so the 46 MB user file won't bloat your repository. It's generated fresh on every deployment.
+
+## 🛠️ Tech Stack
+
+- **Next.js 15** with App Router
+- **React Query** (TanStack Query)
+- **Recharts** for visualization
+- **Tailwind CSS** for styling
+- **TypeScript** for type safety

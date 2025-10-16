@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "mkdir -p data && npx tsx scripts/generateUsers.ts 50000",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate": "npx tsx scripts/generateUsers.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.3",

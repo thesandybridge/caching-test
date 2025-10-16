@@ -3,6 +3,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { MemoryChart } from './MemoryChart';
+import { PerformanceMetrics } from './PerformanceMetrics';
+import Image from 'next/image';
+import { getObjectSize } from '@/utils/memory';
 
 // UserCard component that fetches its own data by ID
 function UserCard({ userId }: { userId: number }) {
@@ -47,10 +50,12 @@ function UserCard({ userId }: { userId: number }) {
   return (
     <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start space-x-4">
-        <img
+        <Image
           src={user.avatar}
           alt={user.name}
           className="w-12 h-12 rounded-full object-cover"
+          width={48}
+          height={48}
         />
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold text-gray-900 truncate">
@@ -76,7 +81,7 @@ export function Strategy2() {
 
   const displayedUserIds = Array.from({ length: userCount }, (_, i) => i + 1);
 
-  // Poll the query cache to get all cached users
+  // Subscribe to query cache changes
   useEffect(() => {
     const updateCachedData = () => {
       const cache = queryClient.getQueryCache();
@@ -92,13 +97,27 @@ export function Strategy2() {
         .map(query => query.state.data as { user?: unknown })
         .filter(data => data && data.user);
 
-      setCachedData({ users });
+      // Defer state update to avoid updating during render
+      setTimeout(() => {
+        setCachedData(prev => {
+          // Only update if the length changed to reduce re-renders
+          if (prev?.users?.length !== users.length) {
+            return { users };
+          }
+          return prev;
+        });
+      }, 0);
     };
 
     updateCachedData();
-    const interval = setInterval(updateCachedData, 1000);
-    return () => clearInterval(interval);
-  }, [queryClient, showUsers]);
+
+    // Subscribe to cache updates instead of polling
+    const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+      updateCachedData();
+    });
+
+    return () => unsubscribe();
+  }, [queryClient]);
 
   return (
     <div className="border-2 border-green-500 rounded-xl p-6 bg-green-50">
@@ -125,9 +144,17 @@ export function Strategy2() {
           </div>
         </div>
 
-        <MemoryChart data={cachedData} label="Individual User Caches" color="#16a34a" />
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <MemoryChart data={cachedData} label="Individual User Caches" color="#16a34a" />
+          <PerformanceMetrics
+            strategy="strategy2"
+            apiCallCount={cachedData?.users?.length || 0}
+            totalDataTransferred={cachedData ? getObjectSize(cachedData) : 0}
+            color="#16a34a"
+          />
+        </div>
 
-        <div className="flex items-center gap-4 mb-4 mt-4">
+        <div className="flex items-center gap-4 mb-4">
           <label className="text-sm font-medium text-gray-700">
             Number of cards to display:
           </label>

@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatBytes, getObjectSize } from '@/utils/memory';
 
 interface MemoryDataPoint {
-  time: string;
+  index: number;
   cacheSize: number;
 }
 
@@ -18,22 +18,23 @@ interface MemoryChartProps {
 export function MemoryChart({ data, label, color }: MemoryChartProps) {
   const [memoryData, setMemoryData] = useState<MemoryDataPoint[]>([]);
   const [currentSize, setCurrentSize] = useState<number>(0);
+  const counterRef = useRef<number>(0);
 
   useEffect(() => {
     const updateMemory = () => {
-      if (data) {
-        const size = getObjectSize(data);
-        setCurrentSize(size);
+      if (!data) return;
 
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString();
+      const size = getObjectSize(data);
+      setCurrentSize(size);
 
-        setMemoryData(prev => {
-          const newData = [...prev, { time: timeStr, cacheSize: size }];
-          // Keep only last 20 data points
-          return newData.slice(-20);
-        });
-      }
+      counterRef.current += 1;
+
+      setMemoryData(prev => {
+        const newPoint = { index: counterRef.current, cacheSize: size };
+        const newData = [...prev, newPoint];
+        // Keep only last 30 data points
+        return newData.slice(-30);
+      });
     };
 
     updateMemory();
@@ -56,27 +57,31 @@ export function MemoryChart({ data, label, color }: MemoryChartProps) {
         </div>
       </div>
 
-      {memoryData.length > 0 && (
+      {memoryData.length === 0 ? (
+        <div className="h-[200px] flex items-center justify-center text-gray-400">
+          No data cached yet
+        </div>
+      ) : (
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={memoryData}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
-              dataKey="time"
+              dataKey="index"
               tick={{ fontSize: 10 }}
-              angle={-45}
-              textAnchor="end"
-              height={60}
+              label={{ value: 'Updates', position: 'insideBottom', offset: -5, fontSize: 11 }}
+              height={40}
             />
             <YAxis
               tickFormatter={(value) => formatBytes(value)}
               tick={{ fontSize: 10 }}
-              width={60}
+              width={70}
             />
             <Tooltip
               formatter={(value: number) => formatBytes(value)}
-              labelStyle={{ color: '#000' }}
+              labelFormatter={(label) => `Update #${label}`}
+              contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #ccc' }}
             />
-            <Legend />
+            <Legend wrapperStyle={{ fontSize: '12px' }} />
             <Line
               type="monotone"
               dataKey="cacheSize"
@@ -84,15 +89,10 @@ export function MemoryChart({ data, label, color }: MemoryChartProps) {
               strokeWidth={2}
               name={label}
               dot={false}
+              isAnimationActive={false}
             />
           </LineChart>
         </ResponsiveContainer>
-      )}
-
-      {memoryData.length === 0 && (
-        <div className="h-[200px] flex items-center justify-center text-gray-400">
-          No data cached yet
-        </div>
       )}
     </div>
   );

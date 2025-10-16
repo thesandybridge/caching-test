@@ -4,16 +4,21 @@ import { useQuery } from '@tanstack/react-query';
 import { User } from '@/types/user';
 import { useState } from 'react';
 import { MemoryChart } from './MemoryChart';
+import { PerformanceMetrics } from './PerformanceMetrics';
+import Image from 'next/image';
+import { getObjectSize } from '@/utils/memory';
 
 // UserCard component that receives user data from parent's cache
 function UserCard({ user }: { user: User }) {
   return (
     <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start space-x-4">
-        <img
+        <Image
           src={user.avatar}
           alt={user.name}
           className="w-12 h-12 rounded-full object-cover"
+          width={48}
+          height={48}
         />
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold text-gray-900 truncate">
@@ -72,9 +77,18 @@ export function Strategy1() {
           )}
         </div>
 
-        <MemoryChart data={data} label="All Users Cache" color="#2563eb" />
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <MemoryChart data={data} label="All Users Cache" color="#2563eb" />
+          <PerformanceMetrics
+            strategy="strategy1"
+            apiCallCount={data ? 1 : 0}
+            totalDataTransferred={data ? getObjectSize(data) : 0}
+            initialLoadTime={data?.meta.fetchTime}
+            color="#2563eb"
+          />
+        </div>
 
-        <div className="flex items-center gap-4 mb-4 mt-4">
+        <div className="flex items-center gap-4 mb-4">
           <label className="text-sm font-medium text-gray-700">
             Number of cards to display:
           </label>
